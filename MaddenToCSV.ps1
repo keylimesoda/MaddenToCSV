@@ -6,7 +6,6 @@
     .DIRECTIONS
         Must be run from admin powershell (only way to open up the listening server)
         You must add a passthrough (or just temporarily disable) PC firewall (for your device to be able to talk to the script)
-        You must erase the 'roster.csv' file in between uses
         The script will run indefinitely.  Close the window when you're done.
 
     .NOTES
