@@ -1,6 +1,5 @@
 ﻿<#
     .SYNOPSIS
-     
         Function to export League Info, Schedules and Rosters to CSV files on-disk
         
     .DIRECTIONS
@@ -10,13 +9,10 @@
 
     .NOTES
         Does not yet handle stats
-        
-
-	
 #>
 
 Add-Type -AssemblyName System.IO
-$FormatEnumerationLimit=-1
+$FormatEnumerationLimit=-1  #Enables larger tables for debug output
 
 $enc = [system.Text.Encoding]::Default
 
@@ -36,30 +32,26 @@ do {
     try{
         Write-Host ""
         Write-Host "Listening for Madden Companion App (close window to exit)"
-        $context = $listener.GetContext()
-        #^^^ this is a blocking call
+        $context = $listener.GetContext() #script will pause here waiting for Companion App
 
         $response = $context.Response
         $request = $context.Request
 
 
-        ### show headers
+<#
+        ### show request headers
         $requestHeaders = $request.Headers
         $stringH = $requestHeaders.AllKeys | 
             Select-Object @{ Name = "Key";Expression = {$_}},
             @{ Name = "Value";Expression={$requestHeaders.GetValues($_)}}
-
- <#     
-        ### show request headers
+     
         foreach ($i in $stringH)
         {
             Write-Host $i
         }
-        Write-Host ($request.Url)
 #>
         $requestUrl = $request.Url
         #Write-Host $requestUrl
-
 
         ### grab and decompress POST data
         $decompress = [System.IO.Compression.GZipStream]::new($request.InputStream, [IO.Compression.CompressionMode]::Decompress)
@@ -74,8 +66,7 @@ do {
         ### based on POST URL, select which kind of export is happening        
         switch -Wildcard ($requestUrl)
         {
-
-            '*leagueteams'
+            '*leagueteams' #LEAGUE INFO
             {
                 $infoList = $requestJson.leagueTeamInfoList
                 #Write-Host ($infoList | Format-Table -Property *| Out-String -Width 4096)
@@ -85,7 +76,7 @@ do {
                 break
             }
 
-            '*standings'
+            '*standings' #LEAGUE INFO
             {
                 $standingsList = $requestJson.teamStandingInfoList
                 #Write-Host ($standingsList | Format-Table -Property *| Out-String -Width 4096)
@@ -95,21 +86,7 @@ do {
                 break
             }
 
-            '*week*'
-            {
-               Write-Host "STATISTICS:  Not yet implemented"
-               
-               <#
-                $scheduleList = $requestJson.gameScheduleInfoList
-                Write-Host ($scheduleList | Format-Table -Property *| Out-String -Width 4096)
-                $scheduleList | Export-Csv -Path "scheduleInfo.csv" 
-                Write-Host "SCHEDULES saved to scheduleInfo.csv"
-                #>
-
-                break
-            }
-            
-            '*roster'
+            '*roster' #ROSTERS
             {
                 
                 Write-Host "ROSTER"
@@ -160,9 +137,24 @@ do {
                    
                 $teamList | Export-Csv -Path "rosters.csv"
                 Write-Host "Export to disk:  rosters.csv" 
+		break
             }
-        }
+	    
+	    '*week*' #WEEKLY STATISTICS
+            {
+               Write-Host "STATISTICS:  Not yet implemented"
+               
+               <#
+                $scheduleList = $requestJson.gameScheduleInfoList
+                Write-Host ($scheduleList | Format-Table -Property *| Out-String -Width 4096)
+                $scheduleList | Export-Csv -Path "scheduleInfo.csv" 
+                Write-Host "SCHEDULES saved to scheduleInfo.csv"
+                #>
 
+                break
+            }
+            
+        }
 
         $readStream.Close()
 
