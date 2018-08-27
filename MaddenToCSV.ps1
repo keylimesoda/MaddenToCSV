@@ -1,6 +1,6 @@
-﻿<#
+<#
     .SYNOPSIS
-        Function to export League Info, Schedules and Rosters to CSV files on-disk
+        Function to League Info, Schedules and Rosters to CSV files on-disk
         
     .DIRECTIONS
         Must be run from admin powershell (only way to open up the listening server)
@@ -137,10 +137,10 @@ do {
                    
                 $teamList | Export-Csv -Path "rosters.csv"
                 Write-Host "Export to disk:  rosters.csv" 
-		break
+		        break
             }
 	    
-	    '*week*' #WEEKLY STATISTICS
+	        '*week*' #WEEKLY STATISTICS
             {
                Write-Host "STATISTICS:  Not yet implemented"
                
