@@ -22,7 +22,16 @@ $serverAddr = "http://"+$ipAddr+":8080/"
 
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add($serverAddr)
-$listener.Start()
+
+try
+{
+    $listener.Start()
+}
+catch
+{
+     Write-Host "Cannot start server.  Script must be run from an admin PowerShell window"
+     exit
+}
 
 Write-Host "Server started at $serverAddr"
 Write-Host "Ensure firewall is disabled"
