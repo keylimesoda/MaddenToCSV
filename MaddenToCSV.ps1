@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-        Function to League Info, Schedules and Rosters to CSV files on-disk
+        Function to export League Info, Schedules and Rosters to CSV files on-disk
         
     .DIRECTIONS
         Must be run from admin powershell (only way to open up the listening server)
