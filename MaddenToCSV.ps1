@@ -44,6 +44,9 @@ else
    # Specify the current script path and name as a parameter
    $newProcess.Arguments = $myInvocation.MyCommand.Definition;
    
+   # Pass along the current working directory for any output
+   $newProcess.WorkingDirectory = $PSScriptRoot
+      
    # Indicate that the process should be elevated
    $newProcess.Verb = "runas";
    
@@ -54,7 +57,7 @@ else
    exit
    }
 
-
+Set-Location -Path $PSScriptRoot
 #//////////////////////////////////////////////////////////////////
 #//Add MaddenToCSV to firewall to allow companion to talk to PC
 #//////////////////////////////////////////////////////////////////
