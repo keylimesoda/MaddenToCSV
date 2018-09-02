@@ -18,7 +18,7 @@ $enc = [system.Text.Encoding]::Default
 
 $ipAddr = (Get-NetIPAddress | ?{ $_.AddressFamily -eq "IPv4"  -and !($_.IPAddress -match "169") -and !($_.IPaddress -match "127") }).IPAddress
 
-$serverAddr = "http://"+$ipAddr+":8080/"
+$serverAddr = "http://"+$ipAddr+":8080"
 
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add($serverAddr)
