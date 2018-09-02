@@ -3,8 +3,6 @@
         Function to export League Info, Schedules and Rosters to CSV files on-disk
         
     .DIRECTIONS
-        Must be run from admin powershell (only way to open up the listening server)
-        You must add a passthrough (or just temporarily disable) PC firewall (for your device to be able to talk to the script)
         The script will run indefinitely.  Close the window when you're done.
 
     .NOTES
@@ -13,12 +11,73 @@
 
 Add-Type -AssemblyName System.IO
 $FormatEnumerationLimit=-1  #Enables larger tables for debug output
-
 $enc = [system.Text.Encoding]::Default
+$port = 8080
+
+#//////////////////////////////////////////////////////////////////
+#//This script must be run as admin to setup firewall and listener
+#//This section creates an escalated window, following correct security practices
+#//////////////////////////////////////////////////////////////////
+
+# Get the ID and security principal of the current user account
+$myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
+$myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
+ 
+# Get the security principal for the Administrator role
+$adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
+ 
+# Check to see if we are currently running "as Administrator"
+if ($myWindowsPrincipal.IsInRole($adminRole))
+   {
+   # We are running "as Administrator" - so change the title and background color to indicate this
+   $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
+   $Host.UI.RawUI.BackgroundColor = "DarkBlue"
+   clear-host
+   }
+else
+   {
+   # We are not running "as Administrator" - so relaunch as administrator
+   
+   # Create a new process object that starts PowerShell
+   $newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
+   
+   # Specify the current script path and name as a parameter
+   $newProcess.Arguments = $myInvocation.MyCommand.Definition;
+   
+   # Indicate that the process should be elevated
+   $newProcess.Verb = "runas";
+   
+   # Start the new process
+   [System.Diagnostics.Process]::Start($newProcess);
+   
+   # Exit from the current, unelevated, process
+   exit
+   }
+
+
+#//////////////////////////////////////////////////////////////////
+#//Add MaddenToCSV to firewall to allow companion to talk to PC
+#//////////////////////////////////////////////////////////////////
+
+$firewallPort = $port
+$firewallRuleName = "MaddenToCSV port $firewallPort"
+    
+if (-Not(Get-NetFirewallRule –DisplayName $firewallRuleName -ErrorAction SilentlyContinue))
+{
+    write-host "Firewall rule for '$firewallRuleName' on port '$firewallPort' does not already exist, creating new rule now..."
+    New-NetFirewallRule -DisplayName $firewallRuleName -Direction Inbound -Profile Domain,Private,Public -Action Allow -Protocol TCP -LocalPort $firewallPort -RemoteAddress Any >$null
+    write-host "Firewall rule for '$firewallRuleName' on port '$firewallPort' created successfully"
+    write-host ""
+}
+
+
+#//////////////////////////////////////////////////////////////////
+#//Setup listener service
+#//////////////////////////////////////////////////////////////////
 
 $ipAddr = (Get-NetIPAddress | ?{ $_.AddressFamily -eq "IPv4"  -and !($_.IPAddress -match "169") -and !($_.IPaddress -match "127") }).IPAddress
 
-$serverAddr = "http://"+$ipAddr+":8080/"
+$serverAddr = "http://"+$ipAddr+":$port/"
 
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add($serverAddr)
@@ -35,13 +94,19 @@ catch
 
 $serverAddr = $serverAddr.TrimEnd('/')
 Write-Host "Server started at $serverAddr"
-Write-Host "Ensure firewall is disabled"
 
+
+#//////////////////////////////////////////////////////////////////
+#//Start the listen/response loop
+#//////////////////////////////////////////////////////////////////
+
+Write-Host ""
+Write-Host "Listening for Madden Companion App (close window to exit)"
+Write-host ""
+        
 do {
         
     try{
-        Write-Host ""
-        Write-Host "Listening for Madden Companion App (close window to exit)"
         $context = $listener.GetContext() #script will pause here waiting for Companion App
 
         $response = $context.Response
@@ -49,7 +114,7 @@ do {
 
 
 <#
-        ### show request headers
+        ### show request headers for debug
         $requestHeaders = $request.Headers
         $stringH = $requestHeaders.AllKeys | 
             Select-Object @{ Name = "Key";Expression = {$_}},
@@ -112,7 +177,7 @@ do {
                 $response.Close()
 
 
-       #        Write-Host ($teamList | Format-Table -Property *| Out-String -Width 4096)
+       		#Write-Host ($teamList | Format-Table -Property *| Out-String -Width 4096)
                 for ($i=2; $i -le 32; $i++)
                 {
                      ### We can safely assume next 32 calls will be rosters so we run full loop, building roster file in memory
@@ -147,7 +212,7 @@ do {
                    
                 $teamList | Export-Csv -Path "rosters.csv"
                 Write-Host "Export to disk:  rosters.csv" 
-		        break
+	        break
             }
 	    
 	        '*week*' #WEEKLY STATISTICS
@@ -163,11 +228,8 @@ do {
 
                 break
             }
-            
         }
-
         $readStream.Close()
-
     } 
     catch {
         $_
@@ -180,7 +242,6 @@ do {
         $response.StatusCode = 500
     }
 
-    
     $quickResponse = "please connect with Madden Companion App"
     $content = $enc.GetBytes($quickResponse)
     
