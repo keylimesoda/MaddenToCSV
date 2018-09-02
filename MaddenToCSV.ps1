@@ -28,14 +28,15 @@ $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
  
 # Check to see if we are currently running "as Administrator"
 if ($myWindowsPrincipal.IsInRole($adminRole))
-   {
+{
    # We are running "as Administrator" - so change the title and background color to indicate this
    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
    $Host.UI.RawUI.BackgroundColor = "DarkBlue"
+   Set-Location -Path $PSScriptRoot
    clear-host
-   }
+}
 else
-   {
+{
    # We are not running "as Administrator" - so relaunch as administrator
    
    # Create a new process object that starts PowerShell
@@ -46,21 +47,21 @@ else
    
    # Pass along the current working directory for any output
    $newProcess.WorkingDirectory = $PSScriptRoot
-      
+   
    # Indicate that the process should be elevated
    $newProcess.Verb = "runas";
    
    # Start the new process
-   [System.Diagnostics.Process]::Start($newProcess);
+   [System.Diagnostics.Process]::Start($newProcess) >$null
    
    # Exit from the current, unelevated, process
    exit
-   }
+}
 
-Set-Location -Path $PSScriptRoot
 #//////////////////////////////////////////////////////////////////
 #//Add MaddenToCSV to firewall to allow companion to talk to PC
 #//////////////////////////////////////////////////////////////////
+
 
 $firewallPort = $port
 $firewallRuleName = "MaddenToCSV port $firewallPort"
@@ -91,7 +92,9 @@ try
 }
 catch
 {
-     Write-Host "Cannot start server.  Script must be run from an admin PowerShell window"
+     Write-Host "Cannot start server.  Script already running in another window?"
+     Write-Host -NoNewLine 'Press any key to continue...';
+     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
      exit
 }
 
@@ -103,6 +106,7 @@ Write-Host "Server started at $serverAddr"
 #//Start the listen/response loop
 #//////////////////////////////////////////////////////////////////
 
+$counter = 1
 Write-Host ""
 Write-Host "Listening for Madden Companion App (close window to exit)"
 Write-host ""
@@ -115,27 +119,15 @@ do {
         $response = $context.Response
         $request = $context.Request
 
-
-<#
-        ### show request headers for debug
-        $requestHeaders = $request.Headers
-        $stringH = $requestHeaders.AllKeys | 
-            Select-Object @{ Name = "Key";Expression = {$_}},
-            @{ Name = "Value";Expression={$requestHeaders.GetValues($_)}}
-     
-        foreach ($i in $stringH)
-        {
-            Write-Host $i
-        }
-#>
         $requestUrl = $request.Url
+        
+        #// Enable this line to see what URL the app is posting to
         #Write-Host $requestUrl
 
         ### grab and decompress POST data
         $decompress = [System.IO.Compression.GZipStream]::new($request.InputStream, [IO.Compression.CompressionMode]::Decompress)
         $readStream = [System.IO.StreamReader]::new($decompress)
         $content = $readStream.ReadToEnd()
-        #Write-Host "$content"
         
 
         ### create JSON object
@@ -149,7 +141,7 @@ do {
                 $infoList = $requestJson.leagueTeamInfoList
                 #Write-Host ($infoList | Format-Table -Property *| Out-String -Width 4096)
                 $infoList | Export-Csv -Path "leagueInfo.csv" 
-                Write-Host "LEAGUE INFO saved to leagueInfo.csv"
+                Write-Host "LEAGUE INFO `t => leagueInfo.csv"
                 
                 break
             }
@@ -159,7 +151,7 @@ do {
                 $standingsList = $requestJson.teamStandingInfoList
                 #Write-Host ($standingsList | Format-Table -Property *| Out-String -Width 4096)
                 $standingsList | Export-Csv -Path "standingsInfo.csv" 
-                Write-Host "STANDINGS saved to standingsInfo.csv"
+                Write-Host "STANDINGS `t => standingsInfo.csv"
                 
                 break
             }
@@ -179,11 +171,9 @@ do {
                 $response.OutputStream.Write($content, 0, $content.Length)
                 $response.Close()
 
-
-       		#Write-Host ($teamList | Format-Table -Property *| Out-String -Width 4096)
                 for ($i=2; $i -le 32; $i++)
                 {
-                     ### We can safely assume next 32 calls will be rosters so we run full loop, building roster file in memory
+                     ### We assume next 32 calls will be rosters so we run full loop, building roster file in memory
                      Write-Host "Team $i"
                      $context = $listener.GetContext()
                      $response = $context.Response
@@ -215,22 +205,69 @@ do {
                    
                 $teamList | Export-Csv -Path "rosters.csv"
                 Write-Host "Export to disk:  rosters.csv" 
-	        break
-            }
-	    
+		break
+            }	    
 	        '*week*' #WEEKLY STATISTICS
             {
-               Write-Host "STATISTICS:  Not yet implemented"
-               
-               <#
-                $scheduleList = $requestJson.gameScheduleInfoList
-                Write-Host ($scheduleList | Format-Table -Property *| Out-String -Width 4096)
-                $scheduleList | Export-Csv -Path "scheduleInfo.csv" 
-                Write-Host "SCHEDULES saved to scheduleInfo.csv"
-                #>
-
+                ### Get a week ID that we'll use as a prefix for the stats files
+                $weekType = $requestUrl.Segments[4].TrimEnd('/')
+                $weekNum  = ($requestUrl.Segments[5].TrimEnd('/'))
+                $weekNum  = [int]$weekNum
+                $week = "({0} {1:D2})" -f $weekType, $weekNum
+                
+                switch -Wildcard ($requestURL)
+                {
+                    '*schedules'
+                    {
+                        $statFilename = "$($week) scheduleInfo.csv"
+                        $requestJson.gameScheduleInfoList| Export-Csv -Path $statFilename
+                        Write-Host "SCHEDULE `t => $statFileName"
+                    }
+                    '*defense'
+                    {
+                        $statFileName = "$($week) defensiveStats.csv"
+                        $requestJson.playerDefensiveStatInfoList| Export-Csv -Path $statFilename
+                        Write-Host "DEFENSIVE STATS  => $statFilename"
+                    }
+                    '*kicking'
+                    {
+                        $statFileName = "$($week) kickingStats.csv"
+                        $requestJson.playerKickingStatInfoList| Export-Csv -Path $statFilename
+                        Write-Host "KICKING STATS `t => $statFilename"
+                    }
+                    '*passing'
+                    {
+                        $statFileName = "$($week) passingStats.csv"
+                        $requestJson.playerPassingStatInfoList| Export-Csv -Path $statFilename
+                        Write-Host "PASSING STATS `t => $statFilename"
+                    }
+                    '*punting'
+                    {
+                        $statFileName = "$($week) puntingStats.csv"
+                        $requestJson.playerPuntingStatInfoList| Export-Csv -Path $statFilename 
+                        Write-Host "PUNTING STATS `t => $statFilename"
+                    }
+                    '*receiving'
+                    {
+                        $statFileName = "$($week) receivingStats.csv"
+                        $requestJson.playerReceivingStatInfoList| Export-Csv -Path $statFilename
+                        Write-Host "RECEIVING STATS  => $statFilename"
+                    }
+                    '*rushing'
+                    {
+                        $statFileName = "$($week) rushingStats.csv"
+                        $requestJson.playerRushingStatInfoList| Export-Csv -Path $statFilename
+                        Write-Host "RUSHING STATS `t => $statFilename"
+                    }
+                    '*teamstats'
+                    {
+                        $statFileName = "$($week) teamStats.csv"
+                        $requestJson.teamStatInfoList| Export-Csv -Path $statFilename
+                        Write-Host "TEAM STATS `t => $statFilename"
+                    }
+                }
                 break
-            }
+            }            
         }
         $readStream.Close()
     } 
@@ -245,6 +282,7 @@ do {
         $response.StatusCode = 500
     }
 
+    
     $quickResponse = "please connect with Madden Companion App"
     $content = $enc.GetBytes($quickResponse)
     
@@ -253,8 +291,5 @@ do {
     $response.Close()
 
     $responseStatus = $response.StatusCode
-    
-    #Write-Host "////////////////////////////////////////////////////////////////////////////RESPONSE: $responseStatus"
-    #$listener.Stop()
 
 } while ($listener.IsListening)
