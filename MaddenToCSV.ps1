@@ -33,6 +33,7 @@ catch
      exit
 }
 
+$serverAddr = $serverAddr.TrimEnd('/')
 Write-Host "Server started at $serverAddr"
 Write-Host "Ensure firewall is disabled"
 
