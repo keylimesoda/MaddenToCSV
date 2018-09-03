@@ -4,6 +4,8 @@ Powershell script which allows the Madden Companion Application to export direct
 # Usage Notes
 - Download MaddenToCSV.ps1
 - Click to run it
+- Enter the server address shown on the PowerShell window into your Madden Companion App, and Export
+- .CSV files will be saved onto your PC
 
 # FYI
 - If your system has disabled running local powershell scripts, you can enable using command "Set-ExecutionPolicy -Scope CurrentUser remotesigned"
