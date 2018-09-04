@@ -3,9 +3,10 @@ Powershell script which allows the Madden Companion Application to export direct
 
 # Usage Notes
 - Download MaddenToCSV.ps1
-- Open a powershell window as administrator
-- Type "Set-ExecutionPolicy Bypass"
-- Click to run the script
+- Before 1st run, you must enable powershell scripts om your computer
+    - Open a powershell window as administrator
+    - Type "Set-ExecutionPolicy Bypass"
+- Run the MaddenToCSV.ps1 script
 - Enter the server address shown on the PowerShell window into your Madden Companion App, and Export
 - .CSV files will be saved onto your PC
 
