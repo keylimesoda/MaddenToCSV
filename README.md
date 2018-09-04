@@ -3,13 +3,12 @@ Powershell script which allows the Madden Companion Application to export direct
 
 # Usage Notes
 - Download MaddenToCSV.ps1
-- Open a powershell window
-- Type "Set-ExecutionPolicy -Scope CurrentUser remotesigned"
+- Open a powershell window as administrator
+- Type "Set-ExecutionPolicy Bypass"
 - Click to run the script
 - Enter the server address shown on the PowerShell window into your Madden Companion App, and Export
 - .CSV files will be saved onto your PC
 
 # FYI
-- If your system has disabled running local powershell scripts, you can enable using command "Set-ExecutionPolicy -Scope CurrentUser remotesigned"
 - Team names are not included in the stats and roster files.  They must be mapped from the table in leagueInfo.csv using the TeamID.
 - The app exports 8 stat tables for each week:  (schedules, defense, kicking, punting, passing, receiving, rushing, teamstats)
