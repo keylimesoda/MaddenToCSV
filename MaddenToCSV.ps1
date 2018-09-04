@@ -66,7 +66,7 @@ else
 $firewallPort = $port
 $firewallRuleName = "MaddenToCSV port $firewallPort"
     
-if (-Not(Get-NetFirewallRule –DisplayName $firewallRuleName -ErrorAction SilentlyContinue))
+if (-Not(Get-NetFirewallRule -DisplayName $firewallRuleName -ErrorAction SilentlyContinue))
 {
     write-host "Firewall rule for '$firewallRuleName' on port '$firewallPort' does not already exist, creating new rule now..."
     New-NetFirewallRule -DisplayName $firewallRuleName -Direction Inbound -Profile Domain,Private,Public -Action Allow -Protocol TCP -LocalPort $firewallPort -RemoteAddress Any >$null
