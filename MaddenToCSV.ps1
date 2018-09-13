@@ -148,7 +148,7 @@ do {
             {
                 $infoList = $requestJson.leagueTeamInfoList
                 #Write-Host ($infoList | Format-Table -Property *| Out-String -Width 4096)
-                $infoList | Export-Csv -Path "leagueInfo.csv" 
+                $infoList | Export-Csv -Path "leagueInfo.csv" -NoTypeInformation
                 Write-Host "LEAGUE INFO `t => leagueInfo.csv"
                 
                 break
@@ -158,7 +158,7 @@ do {
             {
                 $standingsList = $requestJson.teamStandingInfoList
                 #Write-Host ($standingsList | Format-Table -Property *| Out-String -Width 4096)
-                $standingsList | Export-Csv -Path "standingsInfo.csv" 
+                $standingsList | Export-Csv -Path "standingsInfo.csv" -NoTypeInformation
                 Write-Host "STANDINGS `t => standingsInfo.csv"
                 
                 break
@@ -211,7 +211,7 @@ do {
                 $requestJson = $content | ConvertFrom-Json
                 $teamList += $requestJson.rosterInfoList
                    
-                $teamList | Export-Csv -Path "rosters.csv"
+                $teamList | Export-Csv -Path "rosters.csv" -NoTypeInformation
                 Write-Host "Export to disk:  rosters.csv" 
 		break
             }	    
@@ -228,49 +228,49 @@ do {
                     '*schedules'
                     {
                         $statFilename = "$($week) scheduleInfo.csv"
-                        $requestJson.gameScheduleInfoList| Export-Csv -Path $statFilename
+                        $requestJson.gameScheduleInfoList| Export-Csv -Path $statFilename -NoTypeInformation
                         Write-Host "SCHEDULE `t => $statFileName"
                     }
                     '*defense'
                     {
                         $statFileName = "$($week) defensiveStats.csv"
-                        $requestJson.playerDefensiveStatInfoList| Export-Csv -Path $statFilename
+                        $requestJson.playerDefensiveStatInfoList| Export-Csv -Path $statFilename -NoTypeInformation
                         Write-Host "DEFENSIVE STATS  => $statFilename"
                     }
                     '*kicking'
                     {
                         $statFileName = "$($week) kickingStats.csv"
-                        $requestJson.playerKickingStatInfoList| Export-Csv -Path $statFilename
+                        $requestJson.playerKickingStatInfoList| Export-Csv -Path $statFilename -NoTypeInformation
                         Write-Host "KICKING STATS `t => $statFilename"
                     }
                     '*passing'
                     {
                         $statFileName = "$($week) passingStats.csv"
-                        $requestJson.playerPassingStatInfoList| Export-Csv -Path $statFilename
+                        $requestJson.playerPassingStatInfoList| Export-Csv -Path $statFilename -NoTypeInformation
                         Write-Host "PASSING STATS `t => $statFilename"
                     }
                     '*punting'
                     {
                         $statFileName = "$($week) puntingStats.csv"
-                        $requestJson.playerPuntingStatInfoList| Export-Csv -Path $statFilename 
+                        $requestJson.playerPuntingStatInfoList| Export-Csv -Path $statFilename  -NoTypeInformation
                         Write-Host "PUNTING STATS `t => $statFilename"
                     }
                     '*receiving'
                     {
                         $statFileName = "$($week) receivingStats.csv"
-                        $requestJson.playerReceivingStatInfoList| Export-Csv -Path $statFilename
+                        $requestJson.playerReceivingStatInfoList| Export-Csv -Path $statFilename -NoTypeInformation
                         Write-Host "RECEIVING STATS  => $statFilename"
                     }
                     '*rushing'
                     {
                         $statFileName = "$($week) rushingStats.csv"
-                        $requestJson.playerRushingStatInfoList| Export-Csv -Path $statFilename
+                        $requestJson.playerRushingStatInfoList| Export-Csv -Path $statFilename -NoTypeInformation
                         Write-Host "RUSHING STATS `t => $statFilename"
                     }
                     '*teamstats'
                     {
                         $statFileName = "$($week) teamStats.csv"
-                        $requestJson.teamStatInfoList| Export-Csv -Path $statFilename
+                        $requestJson.teamStatInfoList| Export-Csv -Path $statFilename -NoTypeInformation
                         Write-Host "TEAM STATS `t => $statFilename"
                     }
                 }
