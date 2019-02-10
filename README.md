@@ -7,7 +7,7 @@ Powershell script which allows the Madden Companion Application to export direct
     - Type "Set-ExecutionPolicy Bypass"
 - Run the MaddenToCSV.ps1 script
 - options (none are required)
-    - -ipAddress 0.0.0.0  *specify local IP address to use for listening to app*
+    - -ipAddress <0.0.0.0>  *specify local IP address to use for listening to app*
     - -outputAMP          *output AMP Editor compatible roster file*
     - -scrimTeam1         *choose a team to swap with Bucs*
     - -scrimTeam2         *choose a team to swap with the Saints*
