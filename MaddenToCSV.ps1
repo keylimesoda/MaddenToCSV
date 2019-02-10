@@ -456,7 +456,7 @@ function TeamListToAMP ($localTeamList)
 Write-Host ""
 Write-Host "Listening for Madden Companion App (close window to exit)"
 Write-host ""
-$teamDump = $false;
+$requestDump = $false; #set to $true to get a raw JSON output dump of the first incoming request
        
 do {
         
@@ -477,8 +477,8 @@ do {
         $content = $readStream.ReadToEnd()
         
         
-        if ($teamDump){
-          $teamDump = $false
+        if ($requestDump){
+          $requestDump = $false
           Write-Host ("dumping JSON")
           $content | Out-File "team.json"
 
