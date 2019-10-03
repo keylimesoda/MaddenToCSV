@@ -172,39 +172,38 @@ function TeamNameToID ($teamName)
 {
     switch ($teamName)
     {
-        "49ers" {return "778043392"}
-        "Bears" {return "778043394"}
-        "Bengals" {return "778043395"}
-        "Bills" {return "778043396"}
-        "Broncos" {return "778043397"}
-        "Browns" {return "778043398"}
-        "Buccaneers" {return "778043399"}
-        "Bucs" {return "778043399"}
-        "Cardinals" {return "778043400"}
-        "Chargers" {return "778043401"}
-        "Cheifs" {return "778043402"}
-        "Colts" {return "778043403"}
-        "Cowboys" {return "778043404"}
-        "Dolphins" {return "778043405"}
-        "Eagles" {return "778043406"}
-        "Falcons" {return "778043407"}
-        "Giants" {return "778043409"}
-        "Jaguars" {return "778043411"}
-        "Jets" {return "778043412"}
-        "Lions" {return "778043413"}
-        "Packers" {return "778043416"}
-        "Panthers" {return "778043417"}
-        "Patriots" {return "778043418"}
-        "Raiders" {return "778043419"}
-        "Rams" {return "778043420"}
-        "Ravens" {return "778043421"}
-        "Redskins" {return "778043422"}
-        "Saints" {return "778043423"}
-        "Seahawks" {return "778043424"}
-        "Steelers" {return "778043425"}
-        "Texans" {return "778043426"}
-        "Titans" {return "778043427"}
-        "Vikings" {return "778043428"}
+        "49ers" {return "1009778688"}
+        "Bears" {return "1009778689"}
+        "Bengals" {return "1009778690"}
+        "Bills" {return "1009778691"}
+        "Broncos" {return "1009778692"}
+        "Browns" {return "1009778693"}
+        "Buccaneers" {return "1009778694"}
+        "Cardinals" {return "1009778695"}
+        "Chargers" {return "1009778728"}
+        "Cheifs" {return "1009778729"}
+        "Colts" {return "1009778730"}
+        "Cowboys" {return "1009778731"}
+        "Dolphins" {return "1009778732"}
+        "Eagles" {return "1009778733"}
+        "Falcons" {return "1009778734"}
+        "Giants" {return "1009778736"}
+        "Jaguars" {return "1009778738"}
+        "Jets" {return "1009778739"}
+        "Lions" {return "1009778740"}
+        "Packers" {return "1009778742"}
+        "Panthers" {return "1009778743"}
+        "Patriots" {return "1009778744"}
+        "Raiders" {return "1009778745"}
+        "Rams" {return "1009778746"}
+        "Ravens" {return "1009778747"}
+        "Redskins" {return "1009778748"}
+        "Saints" {return "1009778749"}
+        "Seahawks" {return "1009778750"}
+        "Steelers" {return "1009778751"}
+        "Texans" {return "1009778752"}
+        "Titans" {return "1009778753"}
+        "Vikings" {return "1009778754"}
    }
    return $false
 }
@@ -217,38 +216,38 @@ function GetTeamID2 ($teamAppVal)
 {
     switch ($teamAppVal)
     {
-        "778043392" {return 15}
-        "778043394" {return 1}
-        "778043395" {return 2}
-        "778043396" {return 3}
-        "778043397" {return 4}
-        "778043398" {return 5}
-        "778043399" {return 6}
-        "778043400" {return 7}
-        "778043401" {return 8}
-        "778043402" {return 9}
-        "778043403" {return 10}
-        "778043404" {return 11}
-        "778043405" {return 12}
-        "778043406" {return 13}
-        "778043407" {return 14}
-        "778043409" {return 16}
-        "778043411" {return 17}
-        "778043412" {return 18}
-        "778043413" {return 19}
-        "778043416" {return 20}
-        "778043417" {return 21}
-        "778043418" {return 22}
-        "778043419" {return 23}
-        "778043420" {return 24}
-        "778043421" {return 25}
-        "778043422" {return 26}
-        "778043423" {return 27}
-        "778043424" {return 28}
-        "778043425" {return 29}
-        "778043426" {return 32}
-        "778043427" {return 30}
-        "778043428" {return 31}
+        "1009778688" {return 15}
+        "1009778689" {return 1}
+        "1009778690" {return 2}
+        "1009778691" {return 3}
+        "1009778692" {return 4}
+        "1009778693" {return 5}
+        "1009778694" {return 6}
+        "1009778695" {return 7}
+        "1009778728" {return 8}
+        "1009778729" {return 9}
+        "1009778730" {return 10}
+        "1009778731" {return 11}
+        "1009778732" {return 12}
+        "1009778733" {return 13}
+        "1009778734" {return 14}
+        "1009778736" {return 16}
+        "1009778738" {return 17}
+        "1009778739" {return 18}
+        "1009778740" {return 19}
+        "1009778742" {return 20}
+        "1009778743" {return 21}
+        "1009778744" {return 22}
+        "1009778745" {return 23}
+        "1009778746" {return 24}
+        "1009778747" {return 25}
+        "1009778748" {return 26}
+        "1009778749" {return 27}
+        "1009778750" {return 28}
+        "1009778751" {return 29}
+        "1009778752" {return 32}
+        "1009778753" {return 30}
+        "1009778754" {return 31}
     }
     return 1009
 }
