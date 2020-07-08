@@ -9,6 +9,7 @@ Powershell script which allows the Madden Companion Application to export direct
 ## UI
 - Download the MaddenToCSV_UI.ps1 script
 - In Windows Explorer, right click on the script and select "Run with Powershell"
+- All files exported from the companion app will be placed on your Desktop
 
 ## Command Line
 - Download and run the MaddenToCSV.ps1 script
