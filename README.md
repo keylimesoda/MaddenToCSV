@@ -5,7 +5,13 @@ Powershell script which allows the Madden Companion Application to export direct
 - Before 1st run, you must enable powershell scripts on your computer
     - Open a powershell window as administrator
     - Type "Set-ExecutionPolicy Bypass"
-- Run the MaddenToCSV.ps1 script
+
+## UI
+- Download the MaddenToCSV_UI.ps1 script
+- In Windows Explorer, right click on the script and select "Run with Powershell"
+
+## Command Line
+- Download and run the MaddenToCSV.ps1 script
 - options (none are required)
     - -ipAddress <0.0.0.0>  *specify local IP address to use for listening to app*
     - -outputAMP          *output AMP Editor compatible roster file*
