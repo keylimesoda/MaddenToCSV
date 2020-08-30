@@ -1033,13 +1033,30 @@ do {
                 
                 $requestJson = $content | ConvertFrom-Json
                 $teamList += $requestJson.rosterInfoList
-                   
-                $teamList | Export-Csv -Path "rosters.csv" -NoTypeInformation
                 
+		#flatten out abilities before export
+                $teamList | ForEach-Object {
+                    $_ | Add-Member -MemberType NoteProperty -Name "ability1" -Value ""
+                    $_ | Add-Member -MemberType NoteProperty -Name "ability2" -Value ""
+                    $_ | Add-Member -MemberType NoteProperty -Name "ability3" -Value ""
+                    $_ | Add-Member -MemberType NoteProperty -Name "ability4" -Value ""
+                    $_ | Add-Member -MemberType NoteProperty -Name "ability5" -Value ""
+
+                    if ($_.signatureSlotList.Count -gt 0)
+                    {
+                        $_.ability1 = $_.signatureSlotList[0].signatureAbility.signatureTitle
+                        $_.ability2 = $_.signatureSlotList[1].signatureAbility.signatureTitle
+                        $_.ability3 = $_.signatureSlotList[2].signatureAbility.signatureTitle
+                        $_.ability4 = $_.signatureSlotList[3].signatureAbility.signatureTitle
+                        $_.ability5 = $_.signatureSlotList[4].signatureAbility.signatureTitle
+                    }
+                                        
+                }
+		
+                $teamList | Export-Csv -Path "rosters.csv" -NoTypeInformation
                 Write-Host "Export to disk:  rosters.csv"
                 
                 if ($outputAMP -eq $true){TeamListToAmp($teamList)}               
-
 
 		break
             }	    
