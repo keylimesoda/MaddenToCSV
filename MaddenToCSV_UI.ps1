@@ -1162,7 +1162,7 @@ function StartServer ()
                 if ($requestDump){
                   $requestDump = $false
                   Write-Host ("dumping JSON")
-                  $content | Out-File "team.json"
+                  $content | Out-File "team1.json"
 
                 }
 
@@ -1261,6 +1261,11 @@ function StartServer ()
                         $requestJson = $content | ConvertFrom-Json
                         $teamList += $requestJson.rosterInfoList
                    
+		        if ($requestDump){
+                    		Write-Host ("Export to disk:  rosters.json")
+                    		$teamList | ConvertTo-Json -depth 10 |  Set-Content -Path "rosters.json"
+		   	}
+			
 		        #flatten out abilities
                 	$teamList | ForEach-Object {
                     	  $_ | Add-Member -MemberType NoteProperty -Name "ability1" -Value ""
